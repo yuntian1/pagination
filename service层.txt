@@ -1,0 +1,33 @@
+public PageBean findProductListByCid(String cid, int currentPage, int currentCount) {
+
+        ProductDao dao = new ProductDao();
+        //封装一个PageBean返回给web层
+        PageBean pageBean = new PageBean();
+
+//      封装当前页
+        pageBean.setCurrentPage(currentPage);
+        pageBean.setCurrentCount(currentCount);
+//      封装总条数
+        int totalCount = 0;
+        try {
+            totalCount = dao.getCount(cid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        pageBean.setTotalCount(totalCount);
+//        封装总页数
+        int totalPage = (int) Math.ceil(1.0 * totalCount / currentCount);
+        pageBean.setTotalPage(totalPage);
+//        当前页显示的数据
+//        当前页与索引index的关系
+        int index = (currentPage - 1) * currentCount;
+        List<Product> list = null;
+        try {
+            list = dao.findProductByPage(cid, index, currentCount);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        pageBean.setList(list);
+
+        return pageBean;
+    }
